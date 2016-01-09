@@ -101,8 +101,8 @@ void initialize(vector< vector<point*> >& all , point* start){
 };
 
 int weight(point* u , point* v){
-	if(u->istarget == 1 || v->istarget == 1) return 1;
-	else return 2;
+	if(u->istarget == 1 || v->istarget == 1) return -500;
+	else return 50;
 };
 
 void relax(vector<point*> &heap, point* &u, point* &v){
@@ -135,14 +135,18 @@ void dijkstra(vector< vector<point*> > &all, point* start){
 		u = heap_extract_min(heap);
 		//--heap_size;
 		//cout << '(' << u->x << ',' << u->y  << ')'  << ' ' <<  u->d   <<"   "<<endl;
-		for(itp = u->neighbor.begin() ; itp != u->neighbor.end() ; ++itp) 
-			relax(heap, u ,(*itp));
+		for(itp = u->neighbor.begin() ; itp != u->neighbor.end() ; ++itp){
+			//if((*itp) -> isvisit == 0)
+				relax(heap, u ,(*itp));
+		} 
+		u->isvisit = 1;
+		
 	}
 
 };
 
 int main(){
-	ifstream fin("infile6_6.txt");
+	ifstream fin("infile.txt");
 	if(!fin){
 		cout << "cannot open file\n";
 		return 0;
@@ -210,7 +214,8 @@ int main(){
 	
 	point* temp_path;
  	int k = 0;
- while(t_num != 0){
+cout << " target : " << t_num<<endl;
+ while(t_num > 0){
 	dijkstra(all, &start);
 	temp_path = all[end.x-1][end.y-1];
 	vector <point*> path;
@@ -237,9 +242,11 @@ int main(){
 	for( i = 0 ; i < m ; ++i){
 		for( j = 0 ; j < n ; ++ j){
 			all[i][j]->parent.clear();
+			all[i][j]->isvisit = 0;
 		} 
 	}
 	cout << " target : " << t_num<<endl;
+	
  }
 
 	
