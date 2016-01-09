@@ -126,14 +126,15 @@ void dijkstra(vector< vector<point*> > &all, point* start){
 	build_min_heap(heap);
 	point* u;
 	vector<point*>::iterator itp;
+	int heap_size = heap.size();
 	while(!heap.empty()){
 		/*for (std::vector<point*>::iterator it = heap.begin();it != heap.end(); ++it)
 		fout << (*it)->x << ' ' << (*it)->y << ' ' <<  (*it)->d << ' ' <<endl;
 	fout <<endl;*/
 		
 		u = heap_extract_min(heap);
+		//--heap_size;
 		//cout << '(' << u->x << ',' << u->y  << ')'  << ' ' <<  u->d   <<"   "<<endl;
-		
 		for(itp = u->neighbor.begin() ; itp != u->neighbor.end() ; ++itp) 
 			relax(heap, u ,(*itp));
 	}
@@ -141,7 +142,7 @@ void dijkstra(vector< vector<point*> > &all, point* start){
 };
 
 int main(){
-	ifstream fin("infile.txt");
+	ifstream fin("infile6_6.txt");
 	if(!fin){
 		cout << "cannot open file\n";
 		return 0;
@@ -207,22 +208,40 @@ int main(){
 	}
 	
 	
-	dijkstra(all, &start);
-	vector <point*> path;
 	point* temp_path;
+ 	int k = 0;
+ while(t_num != 0){
+	dijkstra(all, &start);
 	temp_path = all[end.x-1][end.y-1];
+	vector <point*> path;
+
 	while(temp_path != NULL){
-		if(temp_path->parent.size() != 0){
+		if (temp_path->istarget == 1){
+			--t_num;
+			temp_path->istarget = 0;
+		} 
+		if(temp_path->parent.size() != 0 ){
 			path.push_back(temp_path);
-			temp_path = temp_path->parent[0];			
+			temp_path = temp_path->parent[k];			
 		}
 		else temp_path = NULL;
 	}
+
 	path.push_back(all[start.x-1][start.y-1]);
 
 	for( i = path.size()-1 ; i >= 0; --i){
 		cout << '(' << path[i]->x << ',' << path[i]->y  << ')' << endl;
 	}
+	cout <<endl;
+
+	for( i = 0 ; i < m ; ++i){
+		for( j = 0 ; j < n ; ++ j){
+			all[i][j]->parent.clear();
+		} 
+	}
+	cout << " target : " << t_num<<endl;
+ }
+
 	
 	
 
