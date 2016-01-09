@@ -25,6 +25,7 @@ public:
 
 
 int m, n;
+int t_num, o_num;
 ofstream fout("output_new.txt");
 
 void swap_point(point* &a,point* &b){
@@ -90,13 +91,13 @@ void heap_decrease_key(vector<point*> &in, int key, point* v){
 	build_min_heap(in);
 };
 
-void initialize(vector< vector<point*> >& all , point start){
+void initialize(vector< vector<point*> >& all , point* start){
 	for( int i = 0 ; i < m ; ++i){
 		for( int j = 0 ; j < n ; ++j){
 			all[i][j]->d = 1e9;
 		}
 	}
-	all[start.x-1][start.y-1]->d = 0;
+	all[start->x-1][start->y-1]->d = 0;
 };
 
 int weight(point* u , point* v){
@@ -114,7 +115,7 @@ void relax(vector<point*> &heap, point* &u, point* &v){
 };
 
 
-void dijkstra(vector< vector<point*> > &all, point start){
+void dijkstra(vector< vector<point*> > &all, point* start){
 	initialize(all, start);
 	vector<point*> heap;
 	for( int i = 0 ; i < m ; ++i){
@@ -126,12 +127,12 @@ void dijkstra(vector< vector<point*> > &all, point start){
 	point* u;
 	vector<point*>::iterator itp;
 	while(!heap.empty()){
-		for (std::vector<point*>::iterator it = heap.begin();it != heap.end(); ++it)
+		/*for (std::vector<point*>::iterator it = heap.begin();it != heap.end(); ++it)
 		fout << (*it)->x << ' ' << (*it)->y << ' ' <<  (*it)->d << ' ' <<endl;
-	fout <<endl;
+	fout <<endl;*/
 		
 		u = heap_extract_min(heap);
-		cout << '(' << u->x << ',' << u->y  << ')'  << ' ' <<  u->d   <<"   "<<endl;
+		//cout << '(' << u->x << ',' << u->y  << ')'  << ' ' <<  u->d   <<"   "<<endl;
 		
 		for(itp = u->neighbor.begin() ; itp != u->neighbor.end() ; ++itp) 
 			relax(heap, u ,(*itp));
@@ -169,7 +170,6 @@ int main(){
 	}
 	vector<  vector<point*> >::iterator itx;
 	vector <point*> ::iterator ity;
-	int t_num, o_num;
 	fin >> t_num;
 	for( i = 0 ; i < t_num ; ++i){
 		fin >> tempx >> tempy;
@@ -202,12 +202,45 @@ int main(){
 					if(all[i-1][j]->isobstacle == 0) all[i][j]->neighbor.push_back(all[i-1][j]);
 					if(all[i][j]->isobstacle == 0) all[i-1][j]->neighbor.push_back(all[i][j]);
 				}
-
 			}
-
 		}
 	}
-/*	vector <point*> ::iterator itp;
+	
+	
+	dijkstra(all, &start);
+	vector <point*> path;
+	point* temp_path;
+	temp_path = all[end.x-1][end.y-1];
+	while(temp_path != NULL){
+		if(temp_path->parent.size() != 0){
+			path.push_back(temp_path);
+			temp_path = temp_path->parent[0];			
+		}
+		else temp_path = NULL;
+	}
+	path.push_back(all[start.x-1][start.y-1]);
+
+	for( i = path.size()-1 ; i >= 0; --i){
+		cout << '(' << path[i]->x << ',' << path[i]->y  << ')' << endl;
+	}
+	
+	
+
+
+	vector <point*> ::iterator itp;
+	for( int i = 0 ; i < m ; ++i){
+		for( int j = 0 ; j < n ; ++j){			
+			fout << '(' << all[i][j]->x << ',' << all[i][j]->y  << ')' << ':';
+			fout << all[i][j]->parent.size() << endl;
+			/*for( itp = all[i][j]->parent.begin() ; itp != all[i][j]->parent.end() ; ++itp){
+				fout << '(' << (*itp)->x << ',' << (*itp)->y  << ')' << endl;
+			}
+*/			
+			if(all[i][j]->parent.size() != 0)
+			fout << '(' << all[i][j]->parent[0]->x << ',' << all[i][j]->parent[0]->y  << ')' << endl;
+		}
+	}
+/*	
 	for(i = 0 ; i < m  ; ++i){
 		for(j = 0 ;  j < n ; ++j){
 			cout << '(' << all[i][j]->x << ',' << all[i][j]->y  << ')' << ':';
@@ -258,6 +291,5 @@ int main(){
 	for (std::vector<point*>::iterator it = heap.begin();it != heap.end(); ++it)
 		fout << (*it)->x << ' ' << (*it)->y << ' ' <<  (*it)->d << endl;*/
 
-	dijkstra(all, start);
 	return 0;
 }
