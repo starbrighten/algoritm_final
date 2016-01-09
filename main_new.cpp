@@ -4,7 +4,6 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include<cstdlib>
 using namespace std;
 
 class point{
